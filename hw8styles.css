@@ -1,0 +1,76 @@
+.fa-star {
+  color: yellow;
+}
+.glyphicon.fill-white {
+}
+ul.nav.nav-tabs.nav-justified > li.ng-scope.active > a.ng-binding {
+  border: 0 0 0 0 !important;
+}
+.btn-primary {
+  background: #0066cc;
+  color: #ffffff !important;
+  width: 80px;
+  border-radius: 0 0 0 0 !important;
+}
+form {
+  background-color: #eeeeee;
+  height: 65%;
+}
+.input-group {
+  height: 30%;
+  padding-top: 0.2%;
+}
+input.btn.btn-outline-primary {
+  margin-top: 0.3%;
+  padding-top : 0.5%;
+  border-radius: 0 0 0 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #0066cc;
+}
+.text {
+  margin-top: 0.5%;
+  color: #2e5eff;
+}
+li.ng-scope.active a.ng-binding{
+  background-color: #0066cc !important;
+  color: #ffffff !important;
+  border-radius: 0 0 0 0;
+}
+.nav-tabs.nav-justified {
+    width: 100%;
+    border-bottom: 2px solid blue !important;
+}
+input.form-control {
+  border-radius: 0 0 0 0 !important;
+}
+.ng-hide-remove {
+  animation:0.5s lightSpeedOut ease;
+}
+.ng-hide-add {
+  animation:0.5s lightSpeedOut ease;
+}
+  /* light speed out */
+  @keyframes lightSpeedOut {
+    0% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes lightSpeedOut {
+    0% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      transform: translate3d(100%, 0, 0) skewX(30deg);
+      opacity: 0;
+    }
+  }

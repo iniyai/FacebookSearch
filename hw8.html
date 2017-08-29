@@ -1,0 +1,202 @@
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!-- Latest compiled and minified CSS -->
+      <link rel="stylesheet" type = "text/css" href="hw8styles.css" >
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" >
+      <!-- Optional theme -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+      <!-- Latest compiled and minified JavaScript -->
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+      <script src="http://connect.facebook.net/en_US/all.js"></script>
+      <script src="controller.js"></script>
+
+    </head>
+
+    <body ng-app="myApp" ng-controller = "myCtrl">
+      <div class = "container-fluid " >
+        <form class="navbar-form row" name = "myForm" ng-submit="searchRequest(states.activeItem,0,25)">
+          <span class = "col-sm-4 text"> FB Search </span>
+          <div class="input-group col-sm-4">
+            <input name = "searchInp" type="text" class="form-control" placeholder="Search" ng-model = "keyword" required>
+            <div class="input-group-btn" >
+              <button class="btn btn-primary" type="submit">
+                <i class="glyphicon glyphicon-search"></i>
+              </button>
+            </div>
+          </div>
+          <input type="button" class="btn btn-outline-primary" ng-click="clearFormData()" value = "Clear">
+        </form>
+
+        <ul class="nav nav-tabs nav-justified" >
+          <li ng-repeat="item in navitems" style = "border: 0 0 0 0;" ng-click = "showTab(item.id,offset)" ng-class="{'active': item.id == states.activeItem}" >
+            <a href = "javascript:void(0)">{{item.title}} </a>
+          </li>
+        </ul>
+      </div>
+      <div> </br> </br>
+      <div class = "progress center-block" ng-show = "searchPro" style="width:30em;">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">
+        </div>
+      </div>
+      <div>
+      <div ng-show = "isLoaded()">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Profile Photo</th>
+              <th>Name</th>
+              <th>Favorite</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat = "x in tableData.data" ng-init = "index = index + 1;">
+              <td> {{$index + 1 }}</td>
+              <td> <a ng-href = "{{x.picture.data.url}}" target = "_blank"> <img class="img-circle" ng-src = "{{x.picture.data.url}}" style = "width:40px;height:30px;"> </a> </td>
+              <td> {{x.name}} </td>
+              <td>
+                  <button ng-click = "isFav(x.id) ? delFav(x.id): setFav(x.id,x.name,states.activeItem,x.picture.data.url)" class="btn btn-default" type="button">
+                      <i class="fa " ng-class = "isFav(x.id) ? 'fa-star' : 'fa-star-o'"></i>
+                  </button>
+              </td>
+              <td>
+                  <button class="btn btn-default" type="button" ng-click = "genAlposts(x.id)">
+                      <i class="glyphicon glyphicon-chevron-right"></i>
+                  </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <ul class="pager">
+          <li><a href="javascript:void(0)" ng-click = "prev()" ng-show = "prevPresent">Previous</a></li>
+          <li><a href="javascript:void(0)" ng-click = "next()" ng-show = "nextPresent">Next</a></li>
+        </ul>
+      </div>
+
+
+      <div ng-show = "favTable">
+        <table class="table" ng-init = "index = 0;" >
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Profile Photo</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Favorite</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat = "x in favArr" ng-init = "index = index + 1;">
+              <td> {{$index + 1}} </td>
+              <td> <a ng-href = "{{x.imgURL}}" target = "_blank"> <img class="img-circle" ng-src = "{{x.imgURL}}" style = "width:40px;height:30px;"> </a> </td>
+              <td> {{x.name}} </td>
+              <td> {{x.type}} </td>
+              <td>
+                  <button class="btn btn-default" type="button" ng-click = "deleteFav($index)">
+                      <i class="glyphicon glyphicon-trash"></i>
+                  </button>
+              </td>
+              <td>
+                  <button class="btn btn-default" type="button" ng-click = "genAlposts(x.id)">
+                      <i class="glyphicon glyphicon-chevron-right"></i>
+                  </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+
+
+      <div class = "container-fluid alposts" ng-show = "secondPage">
+      </br>
+        <div class = "row container-fluid">
+          <button ng-click="showTab(states.activeItem)" class="btn btn-default" type="button">
+            <i class="glyphicon glyphicon-chevron-left"></i> Back
+          </button>
+          <div class = "pull-right">
+            <button ng-click = "isFav(curId) ? delFav(curId): setFav(curId,Postname,states.activeItem,Postpic)" class="btn btn-default" type="button">
+                <i class="glyphicon glyphicon-star-empty" ng-class = "isFav(curId) ? 'fill-yellow' : 'fill-white'"></i>
+            </button>
+            <button ng-click = "postToFb(Postpic, Postname)" class="btn btn-default" type="button">
+              <img src = "facebook.png" style = "width:25px;height:20px;" alt = "Img not found">
+            </button>
+          </div>
+        </div> </br>
+        <div class = "row">
+          <div class = "col-sm-6 ">
+            <div class = "panel panel-default">
+            <div class="panel-heading">Albums</div>
+            <div class = "progress" ng-show = "Alprog">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">
+              </div>
+            </div>
+            <div class="panel-body" ng-show = "!Alprog">
+              <div class="alert alert-warning" ng-show = "!Alpresent">
+                No albums present
+              </div>
+              <div class="panel-group" id = "accordion" ng-show = "Alpresent">
+                <div ng-repeat = "album in albums" class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion" ng-href="#al{{album.id}}">{{album.name}}</a>
+                    </h4>
+                  </div>
+                  <div id="{{'al' + album.id}}" class="panel-collapse collapse" ng-class="{'in': $index == 0}">
+                    <div class="panel-body" ng-repeat = "picVal in album.photos.data | limitTo: 2">
+                      <a ng-href = "https://graph.facebook.com/v2.8/{{picVal.id}}/picture?redirect=true&access_token=EAAXbZBNb7RzMBAGaC38bR3xW0BKS2SKTJwKuyg8RpNkwCx1JFQySthvxjHygReDgNAKpg4H5XcjXDJ5UBSXYZBpQuXOFtmwSs4qZCrrCFlI5E5MEIIh8SR3ulTnbRtNhhbZCbkaPqQaFuzYlQ43UarsPB1x0IlYZD" target = "_blank">
+                        <img ng-src = "https://graph.facebook.com/v2.8/{{picVal.id}}/picture?redirect=true&access_token=EAAXbZBNb7RzMBAGaC38bR3xW0BKS2SKTJwKuyg8RpNkwCx1JFQySthvxjHygReDgNAKpg4H5XcjXDJ5UBSXYZBpQuXOFtmwSs4qZCrrCFlI5E5MEIIh8SR3ulTnbRtNhhbZCbkaPqQaFuzYlQ43UarsPB1x0IlYZD" style = "width:250px;height:200px;">
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class = "col-sm-6">
+            <div class="panel panel-default">
+              <div class="panel-heading">Posts</div>
+              <div class = "progress" ng-show = "Poprog">
+                <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width:40%">
+                </div>
+              </div>
+              <div class="panel-body" ng-show = "!Poprog">
+                <div class="alert alert-warning" ng-show = "!Popresent">
+                  No Posts present
+                </div>
+                <div ng-repeat = "post in posts" ng-show = "Popresent" class="panel panel-default">
+                  <div class="panel-body">
+                  <table>
+                    <tr>
+                      <td rowspan="2">
+                        <img class = "img-thumbnail" ng-src = "{{Postpic}}" style = "width:50px;height:50px;">
+                      </td>
+                      <td><strong> {{Postname}} </strong> </br> </td>
+                    </tr>
+                    <tr>
+                        <td>{{post.created_time | date:'yyyy-MM-dd HH:mm:ss'}} </td>
+                    </tr>
+                  </table>
+                  <p>  {{post.message}} </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </body>
+  </html>
